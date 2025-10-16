@@ -110,12 +110,11 @@ function App() {
     if (!isEmptyCellsLeft(newBoard)) {
       handleMStates("movesLeft");
     }
-    
+
     // no change in board
     if (JSON.stringify(tempBoard) === JSON.stringify(newBoard)) {
       return tempBoard;
     }
-
 
     //update board, score, undoBoard (size == 3)
     const updatedBoard = addValAtRandomCellInGrid(newBoard);
@@ -152,6 +151,42 @@ function App() {
     return () => window.removeEventListener("keydown", handleKeys);
   }, [board]);
 
+  useEffect(() => {
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    const handleTouchStart = (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (e) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = touchEndY - touchStartY;
+      const threshold = 50;
+
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (deltaX > threshold) handleMove("right");
+        else if (deltaX < -threshold) handleMove("left");
+      } else {
+        if (deltaY > threshold) handleMove("down");
+        else if (deltaY < -threshold) handleMove("up");
+      }
+    };
+
+    const container = document.querySelector(".game-container");
+    container.addEventListener("touchstart", handleTouchStart);
+    container.addEventListener("touchend", handleTouchEnd);
+
+    return () => {
+      container.removeEventListener("touchstart", handleTouchStart);
+      container.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [board]);
+
   const handleUndo = () => {
     if (undoBoard.length < 2) return;
     const temp = [...undoBoard];
@@ -171,7 +206,7 @@ function App() {
     setRedoBoard(temp);
   };
 
-  // restate game with same size 
+  // restate game with same size
   const restartGame = () => {
     const newBoard = addValAtRandomCellInGrid(
       addValAtRandomCellInGrid(createBoard(size))
@@ -217,6 +252,21 @@ function App() {
               ))}
             </div>
           ))}
+        </div>
+
+        <div className="mobile-controls">
+          <button onClick={() => handleMove("up")} className="up">
+            ↑
+          </button>
+          <button onClick={() => handleMove("down")} className="down">
+            ↓
+          </button>
+          <button onClick={() => handleMove("left")} className="left">
+            ←
+          </button>
+          <button onClick={() => handleMove("right")} className="right">
+            →
+          </button>
         </div>
 
         <div className="game-controls">

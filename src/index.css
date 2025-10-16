@@ -258,6 +258,46 @@ h1 {
   }
 }
 
+.mobile-controls {
+  display: none;
+  position: relative;
+  margin: 60px 0px;
+}
+
+.mobile-controls button:active {
+  box-shadow: inset 3px 3px 6px #ccc, inset -3px -3px 6px #fff;
+  background: #f2f2f2;
+}
+
+.up {
+  position: absolute;
+  top: -60px;
+  transform: translateX(-50%);
+}
+
+.down {
+  position: absolute;
+  bottom: -60px;
+  transform: translateX(-50%);
+}
+
+.left {
+  position: absolute;
+  left: -60px;
+  transform: translateY(-50%);
+}
+
+.right {
+  position: absolute;
+  right: -60px;
+  transform: translateY(-50%);
+}
+
+@media (max-width: 430px) {
+  .mobile-controls {
+    display: block;
+  }
+}
 @media (max-width: 480px) {
   .col {
     width: 42px;
