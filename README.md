@@ -1,16 +1,61 @@
-# React + Vite
+# 2048 Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React-based 2048 game with configurable board size, dynamic score tracking, Undo/ redo functionality and responsive UI.
 
-Currently, two official plugins are available:
+## Table of Contents
+1. Installation
+2. Running the Game
+3. Game Instructions
+4. Implementation Details
+5. Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Installation
+1. Clone the repo: git clone https://github.com/GaliveetiSaiRoopa/game-2048.git
+2. Navigate into project directory: cd game-2048
+3. Install dependencies : npm install
 
-## React Compiler
+## Running the game
+Start the development server: npm start (visit browser at http://localhost:5173/) (Vite + react).  
+Build for production: npm run build
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Game Instructions
+#### Combining the tiles with same number (adjacent tiles) on every move to reach 2048 score.
 
-## Expanding the ESLint configuration
+### Controls:
+- Use keyboard arrows to control the game
+- Click Restart button to restart the game 
+- Undo / Redo buttons to revert back or redo moves
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Rules:
+-Tiles with the same number (adjacent tiles - in arrow direction) merge into one tile with their sum.
+- After every move new tile with values either 2 or 4 gets added to the board at random empty tile.
+- Game ends when:
+  - You reach score 2048 (win)
+  - No more moves are possible
+ 
+### Score Calculation:
+- Score increases by the sum of merged tiles.
+- Best score is tracked using **localStorage**.
+
+## Implementation Details
+  - React functional components with hooks (useState, useEffect, useRef)
+  - **Board Logic and game implementation**: Implemented in utils.js using functional programming principles
+    - CreateBoard(size) - creates empty board
+    - addValAtRandonCellInGrid(board) - adds 2 or 4 values at random tiles on the board
+    - moveLeft/moveRight/moveUp/moveDown(board) - handle tile movements and merging
+    - hasWon(board) - checks for tile with 2048 value
+    - isEmptyCellsLeft(board) - checks for avaliable moves
+
+ - Undo/Redo functionality: stores last 3 board states in memory to allow undo/redo
+ - Local Storage: Data persists between sessions
+ - **Accessibility:** Keyboard support with keydown events
+
+## Features
+- Configurable board size (4 X 4, 5 X 5, 6 X 6)
+- Undo/ Redo moves
+- Persists bestscore between sessions
+- Restart Game
+   
+
+
+
