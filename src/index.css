@@ -6,6 +6,8 @@ body {
   align-items: center;
   background: linear-gradient(135deg, #e2e2e2, #ffffff);
   font-family: "Poppins", sans-serif;
+  overflow: hidden;
+  margin: 0;
 }
 
 button {
