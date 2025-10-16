@@ -2,11 +2,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   addValAtRandomCellInGrid,
   createBoard,
+  hasWon,
+  isEmptyCellsLeft,
   moveDown,
   moveLeft,
   moveRight,
   moveUp,
 } from "./utils";
+import HasWon from "./modals/HasWon";
+import HasAnyMovesLeft from "./modals/HasAnyMovesLeft";
 
 function App() {
   const [size, setSize] = useState(Number(localStorage.getItem("size")) || 4);
@@ -28,7 +32,16 @@ function App() {
     JSON.parse(localStorage.getItem("redoBoard")) || []
   );
 
-  console.log(size, "Check Size");
+  const [mStates, setMStates] = useState({
+    won: { isOpen: false },
+    movesLeft: { isOpen: false },
+  });
+
+  const handleMStates = (type) => {
+    const temp = { ...mStates };
+    temp[type].isOpen = !temp[type].isOpen;
+    setMStates(temp);
+  };
 
   // Initialize board
 
@@ -58,54 +71,59 @@ function App() {
     }
   }, [board, score, undoBoard, redoBoard, bestScore]);
 
-  const handleMove = useCallback(
-    (direction) => {
-      if (!board) return;
-      let gainScore = 0;
-      let tempBoard = board?.map((row) => [...row]);
-      let newBoard = tempBoard;
-      switch (direction) {
-        case "left":
-          const { updatedLeftBoard, addScore } = moveLeft(tempBoard);
-          newBoard = updatedLeftBoard;
-          gainScore = addScore;
-          break;
-        case "right":
-          const { updatedRightBoard, addScore: rightMoveScore } =
-            moveRight(tempBoard);
-          newBoard = updatedRightBoard;
-          gainScore = rightMoveScore;
-          break;
-        case "up":
-          const { updatedUpBoard, addScore: upMoveScore } = moveUp(tempBoard);
-          newBoard = updatedUpBoard;
-          gainScore = upMoveScore;
-          break;
-        case "down":
-          const { updatedDownBoard, addScore: downMoveScore } =
-            moveDown(tempBoard);
-          newBoard = updatedDownBoard;
-          gainScore = downMoveScore;
-          break;
-        default:
-          return tempBoard;
-      }
-
-      if (JSON.stringify(tempBoard) === JSON.stringify(newBoard)) {
+  const handleMove = (direction) => {
+    if (!board) return;
+    let gainScore = 0;
+    let tempBoard = board?.map((row) => [...row]);
+    let newBoard = tempBoard;
+    switch (direction) {
+      case "left":
+        const { updatedLeftBoard, addScore } = moveLeft(tempBoard);
+        newBoard = updatedLeftBoard;
+        gainScore = addScore;
+        break;
+      case "right":
+        const { updatedRightBoard, addScore: rightMoveScore } =
+          moveRight(tempBoard);
+        newBoard = updatedRightBoard;
+        gainScore = rightMoveScore;
+        break;
+      case "up":
+        const { updatedUpBoard, addScore: upMoveScore } = moveUp(tempBoard);
+        newBoard = updatedUpBoard;
+        gainScore = upMoveScore;
+        break;
+      case "down":
+        const { updatedDownBoard, addScore: downMoveScore } =
+          moveDown(tempBoard);
+        newBoard = updatedDownBoard;
+        gainScore = downMoveScore;
+        break;
+      default:
         return tempBoard;
-      }
-      const updatedBoard = addValAtRandomCellInGrid(newBoard);
-      setBoard(updatedBoard);
-      setScore((score) => score + gainScore);
-      setUndoBoard((prev) => {
-        const temp = [...prev, updatedBoard];
-        if (temp.length > 3) temp.shift();
-        return temp;
-      });
-      setRedoBoard([]);
-    },
-    [board]
-  );
+    }
+
+    if (JSON.stringify(tempBoard) === JSON.stringify(newBoard)) {
+      return tempBoard;
+    }
+    const updatedBoard = addValAtRandomCellInGrid(newBoard);
+    setBoard(updatedBoard);
+    setScore((score) => score + gainScore);
+    setUndoBoard((prev) => {
+      const temp = [...prev, updatedBoard];
+      if (temp.length > 3) temp.shift();
+      return temp;
+    });
+    setRedoBoard([]);
+
+    if (hasWon(newBoard)) {
+      handleMStates("won");
+    }
+
+    if (!isEmptyCellsLeft(newBoard)) {
+      handleMStates("movesLeft");
+    }
+  };
 
   useEffect(() => {
     const handleKeys = (e) => {
@@ -124,10 +142,10 @@ function App() {
           break;
       }
     };
-
+    console.log("Added Up Key");
     window.addEventListener("keydown", handleKeys);
     return () => window.removeEventListener("keydown", handleKeys);
-  }, [handleMove]);
+  }, [board]);
 
   const handleUndo = () => {
     if (undoBoard.length < 2) return;
@@ -161,69 +179,86 @@ function App() {
   console.log(size, "Size check");
 
   return (
-    <div className="game-container">
-      <h1>2048 Game</h1>
-      <div className="info">
-        <p>Score: {score}</p>
-        <p>Best: {bestScore}</p>
-        <select
-          className="board-size"
-          id="size"
-          onChange={(e) => {
-            setSize(Number(e.target.value));
-            localStorage.setItem("size", e.target.value);
-            inputRef.current.blur();
-          }}
-          ref={inputRef}
-          value={size}
-        >
-          <option value={4}>4 X 4</option>
-          <option value={5}>5 X 5</option>
-          <option value={6}>6 X 6</option>
-        </select>
-      </div>
+    <>
+      <div className="game-container">
+        <h1>2048 Game</h1>
+        <div className="info">
+          <p>Score: {score}</p>
+          <p>Best: {bestScore}</p>
+          <select
+            className="board-size"
+            id="size"
+            onChange={(e) => {
+              setSize(Number(e.target.value));
+              localStorage.setItem("size", e.target.value);
+              inputRef.current.blur();
+            }}
+            ref={inputRef}
+            value={size}
+          >
+            <option value={4}>4 X 4</option>
+            <option value={5}>5 X 5</option>
+            <option value={6}>6 X 6</option>
+          </select>
+        </div>
 
-      <div className="board">
-        {board?.map((row, rowIndex) => (
-          <div className="row" key={rowIndex}>
-            {row.map((col, colIndex) => (
-              <div className={`col val-${col}`} key={colIndex}>
-                {col === 0 ? "" : col}
-              </div>
-            ))}
+        <div className="board">
+          {board?.map((row, rowIndex) => (
+            <div className="row" key={rowIndex}>
+              {row.map((col, colIndex) => (
+                <div className={`col val-${col}`} key={colIndex}>
+                  {col === 0 ? "" : col}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        <div className="game-controls">
+          <div
+            className={`undo-wrapper ${undoBoard.length < 2 ? "disable" : ""}`}
+          >
+            <img
+              src="src/assets/undo.svg"
+              alt="undo"
+              className={`undo-img `}
+              onClick={handleUndo}
+            />
+            <p className="undo">Undo the move</p>
           </div>
-        ))}
+          <div
+            className={`undo-wrapper  ${redoBoard.length < 1 ? "disable" : ""}`}
+          >
+            <img
+              src="src/assets/redo.svg"
+              alt="redo"
+              className={`undo-img`}
+              onClick={handleRedo}
+            />
+            <p className="undo">Redo the move</p>
+          </div>
+
+          <button className="" onClick={() => restartGame()}>
+            Restart
+          </button>
+        </div>
       </div>
 
-      <div className="game-controls">
-        <div
-          className={`undo-wrapper ${undoBoard.length < 2 ? "disable" : ""}`}
-        >
-          <img
-            src="src/assets/undo.svg"
-            alt="undo"
-            className={`undo-img `}
-            onClick={handleUndo}
-          />
-          <p className="undo">Undo the move</p>
-        </div>
-        <div
-          className={`undo-wrapper  ${redoBoard.length < 1 ? "disable" : ""}`}
-        >
-          <img
-            src="src/assets/redo.svg"
-            alt="redo"
-            className={`undo-img`}
-            onClick={handleRedo}
-          />
-          <p className="undo">Redo the move</p>
-        </div>
+      {mStates?.won?.isOpen && (
+        <HasWon
+          open={mStates?.won?.isOpen}
+          handleClose={() => handleMStates("won")}
+        />
+      )}
 
-        <button className="" onClick={() => restartGame()}>
-          Restart
-        </button>
-      </div>
-    </div>
+      {mStates?.movesLeft?.isOpen && (
+        <HasAnyMovesLeft
+          open={mStates?.movesLeft?.isOpen}
+          handleClose={() => handleMStates("movesLeft")}
+          handleRestart={() => restartGame()}
+        />
+      )}
+    </>
   );
 }
 

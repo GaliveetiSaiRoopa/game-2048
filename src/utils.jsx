@@ -78,3 +78,19 @@ export const moveDown = (board) => {
   const updatedDownBoard = transposeMatrix(updatedRightBoard);
   return { updatedDownBoard, addScore };
 };
+
+export const hasWon = (board) => {
+  return board.some((row) => row.includes(2048));
+};
+
+export const isEmptyCellsLeft = (board) => {
+  for (let i = 0; i < board.length; i++) {
+    for (let j = 0; j < board.length; j++) {
+      if (board[i][j] === 0) return true;
+
+      if (j < 3 && board[i][j] === board[i][j + 1]) return true;
+      if (i < 3 && board[i][j] === board[i + 1][j]) return true;
+    }
+  }
+  return false;
+};
