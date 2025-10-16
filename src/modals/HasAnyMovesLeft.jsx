@@ -2,8 +2,14 @@ import React, { useEffect } from "react";
 import closeIcon from "../assets/Close.svg";
 
 const HasAnyMovesLeft = ({ open, handleClose, handleRestart }) => {
+  if (!open) return;
   const onClickClose = () => {
     handleClose();
+  };
+
+  const handleRestartGame = () => {
+    handleRestart();
+    onClickClose();
   };
 
   useEffect(() => {
@@ -32,7 +38,7 @@ const HasAnyMovesLeft = ({ open, handleClose, handleRestart }) => {
         </div>
         <div className="body-modal">
           <div className="modal-text">No more moves are possible</div>
-           <button className="" onClick={() => handleRestart()}>
+          <button className="" onClick={handleRestartGame}>
             Restart
           </button>
         </div>

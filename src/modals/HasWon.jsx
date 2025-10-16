@@ -16,7 +16,12 @@ const HasWon = ({ open, handleClose }) => {
     return () => (document.body.style.overflow = "auto");
   }, [open]);
   return (
-    <div className="modal-state" onClick={onClickClose}>
+    <div
+      className="modal-state"
+      onClick={onClickClose}
+      aria-modal="true"
+      aria-labelledby="winMessage"
+    >
       <div className="modal-inner" onClick={(e) => e.stopPropagation()}>
         <div className="header-modal">
           <p className=""></p>
@@ -28,7 +33,9 @@ const HasWon = ({ open, handleClose }) => {
           />
         </div>
 
-        <div className="modal-text">Hurry! You won the Game</div>
+        <div className="modal-text" id={"winMessage"}>
+          Hurry! You won the Game
+        </div>
       </div>
     </div>
   );

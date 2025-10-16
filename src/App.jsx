@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   addValAtRandomCellInGrid,
   createBoard,
@@ -13,6 +13,7 @@ import HasWon from "./modals/HasWon";
 import HasAnyMovesLeft from "./modals/HasAnyMovesLeft";
 
 function App() {
+  const inputRef = useRef();
   const [size, setSize] = useState(Number(localStorage.getItem("size")) || 4);
   const [board, setBoard] = useState(
     JSON.parse(localStorage.getItem("board")) || null
@@ -20,11 +21,10 @@ function App() {
   const [score, setScore] = useState(
     Number(localStorage.getItem("score")) || 0
   );
-  const inputRef = useRef();
+
   const [bestScore, setBestScore] = useState(
     Number(localStorage.getItem("bestScore")) || 0
   );
-  ("");
   const [undoBoard, setUndoBoard] = useState(
     JSON.parse(localStorage.getItem("undoBoard")) || []
   );
@@ -43,8 +43,7 @@ function App() {
     setMStates(temp);
   };
 
-  // Initialize board
-
+  // Initilize the board on first render and when size (dependency array changes)
   useEffect(() => {
     if (!board || board.length != size) {
       let newBoard = createBoard(size);
@@ -56,9 +55,9 @@ function App() {
     }
   }, [size]);
 
+  // storing board, score, redoboard, undoboard , bestScore in localStorage on every render
   useEffect(() => {
     if (!board) return;
-
     localStorage.setItem("board", JSON.stringify(board));
     localStorage.setItem("score", score);
     localStorage.setItem("redoBoard", JSON.stringify(redoBoard));
@@ -71,6 +70,7 @@ function App() {
     }
   }, [board, score, undoBoard, redoBoard, bestScore]);
 
+  // based on directions newBoard is created with updated values
   const handleMove = (direction) => {
     if (!board) return;
     let gainScore = 0;
@@ -103,9 +103,21 @@ function App() {
         return tempBoard;
     }
 
+    if (hasWon(newBoard)) {
+      handleMStates("won");
+    }
+
+    if (!isEmptyCellsLeft(newBoard)) {
+      handleMStates("movesLeft");
+    }
+    
+    // no change in board
     if (JSON.stringify(tempBoard) === JSON.stringify(newBoard)) {
       return tempBoard;
     }
+
+
+    //update board, score, undoBoard (size == 3)
     const updatedBoard = addValAtRandomCellInGrid(newBoard);
     setBoard(updatedBoard);
     setScore((score) => score + gainScore);
@@ -115,17 +127,10 @@ function App() {
       return temp;
     });
     setRedoBoard([]);
-
-    if (hasWon(newBoard)) {
-      handleMStates("won");
-    }
-
-    if (!isEmptyCellsLeft(newBoard)) {
-      handleMStates("movesLeft");
-    }
   };
 
   useEffect(() => {
+    // based on key press from key board
     const handleKeys = (e) => {
       switch (e.key) {
         case "ArrowLeft":
@@ -142,7 +147,7 @@ function App() {
           break;
       }
     };
-    console.log("Added Up Key");
+    //adding key events to window (keyDown - browser event checks for keyboard - key press)
     window.addEventListener("keydown", handleKeys);
     return () => window.removeEventListener("keydown", handleKeys);
   }, [board]);
@@ -166,6 +171,7 @@ function App() {
     setRedoBoard(temp);
   };
 
+  // restate game with same size 
   const restartGame = () => {
     const newBoard = addValAtRandomCellInGrid(
       addValAtRandomCellInGrid(createBoard(size))
@@ -176,7 +182,6 @@ function App() {
     setUndoBoard([newBoard]);
     setScore(0);
   };
-  console.log(size, "Size check");
 
   return (
     <>
@@ -215,24 +220,20 @@ function App() {
         </div>
 
         <div className="game-controls">
-          <div
-            className={`undo-wrapper ${undoBoard.length < 2 ? "disable" : ""}`}
-          >
+          <div className={`undo-wrapper`}>
             <img
               src="src/assets/undo.svg"
               alt="undo"
-              className={`undo-img `}
+              className={`undo-img ${undoBoard.length < 2 ? "disable" : ""} `}
               onClick={handleUndo}
             />
             <p className="undo">Undo the move</p>
           </div>
-          <div
-            className={`undo-wrapper  ${redoBoard.length < 1 ? "disable" : ""}`}
-          >
+          <div className={`undo-wrapper`}>
             <img
               src="src/assets/redo.svg"
               alt="redo"
-              className={`undo-img`}
+              className={`undo-img ${redoBoard.length < 1 ? "disable" : ""}`}
               onClick={handleRedo}
             />
             <p className="undo">Redo the move</p>

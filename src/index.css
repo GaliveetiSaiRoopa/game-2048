@@ -1,71 +1,69 @@
 body {
   min-height: 100vh;
-  min-width: 100vb;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  min-width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #e2e2e2, #ffffff);
+  font-family: "Poppins", sans-serif;
 }
 
 button {
   border-radius: 8px;
   border: 1px solid transparent;
-  padding: 0rem 1.2em;
+  padding: 0.4rem 1.2rem;
   font-size: 1em;
   font-weight: 500;
-  font-family: inherit;
   background-color: #5b5a5a;
-  cursor: pointer;
-  transition: border-color 0.25s;
   color: white;
-  height: 35px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  height: 38px;
 }
 button:hover {
   border-color: #646cff;
+  background-color: #444;
 }
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-/* @media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-} */
-
 .game-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  gap: 12px;
+  padding: 20px;
+  border-radius: 12px;
+  background-color: #fafafa;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 90vw;
+}
+
+h1 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 .info {
   display: flex;
-  gap: 20px;
+  gap: 16px;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 1rem;
 }
 
 .board {
-  border: black;
   background-color: rgb(198, 172, 142);
   padding: 4px;
   display: inline-block;
   border-radius: 8px;
   margin: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .row {
@@ -73,83 +71,90 @@ button:focus-visible {
 }
 
 .col {
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   margin: 4px;
-  border: 1px solid black;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 400;
-  font-size: medium;
-  box-shadow: 12px;
+  font-weight: 600;
+  font-size: 1.2rem;
+  transition: background-color 0.2s ease;
 }
 
 .val-0 {
-  background-color: rgb(207, 206, 204);
+  background-color: #cdc1b4;
 }
 
 .val-2 {
-  background-color: #f0f0f4;
+  background-color: #eee4da;
 }
 
 .val-4 {
-  background-color: rgb(187, 174, 157);
+  background-color: #ede0c8;
 }
 
 .val-8 {
-  background-color: rgb(253, 215, 144);
+  background-color: #f2b179;
 }
 
 .val-16 {
-  background-color: orange;
+  background-color: #f59563;
 }
 
 .val-32 {
-  background-color: rgb(201, 149, 28);
+  background-color: #f67c5f;
 }
 
 .val-64 {
-  background-color: rgb(237, 117, 117);
+  background-color: #f65e3b;
 }
 
 .val-128 {
-  background-color: #a5a9e9;
+  background-color: #edcf72;
 }
 
 .val-256 {
-  background-color: #565bbe;
+  background-color: #edcc61;
 }
 
 .val-512 {
-  background-color: aquamarine;
+  background-color: #edc850;
 }
 
 .val-1024 {
-  background-color: aqua;
+  background-color: #edc53f;
 }
 .val-2048 {
-  background-color: rgb(233, 121, 121);
+  background-color: #edc22e;
 }
 
 .val-4096 {
-  background-color: beige;
+  background-color: #3c3a32;
+  color: #fff;
 }
+
+/* select button */
 
 .board-size {
   border-radius: 8px;
-  padding: 0px 12px;
-  height: 30px;
+  padding: 4px 12px;
+  height: 35px;
   background-color: black;
   color: white;
+  border: none;
+  font-weight: 500;
 }
 
+/* undo-redo-restart */
 .game-controls {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
   margin: 10px 0px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .undo-wrapper {
@@ -159,39 +164,42 @@ button:focus-visible {
 }
 
 .undo-img {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border: 2px solid black;
   padding: 3px;
   border-radius: 8px;
   cursor: pointer;
 }
 
-.undo-wrapper.disable img {
+.undo-img.disable {
   cursor: not-allowed;
   pointer-events: none;
   opacity: 0.5;
 }
 
+/* show undo -redo details - tooltip */
 .undo {
   display: none;
   position: absolute;
-  bottom: 25px;
+  bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
+  font-size: 0.8rem;
+  color: #444;
 }
 
 .undo-wrapper:hover .undo {
   display: block;
 }
 
+/* modal - ui  */
+
 .modal-state {
-  /* fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50 */
   position: fixed;
-  inset: 0px;
-  background-color: black;
-  opacity: 90%;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -199,17 +207,15 @@ button:focus-visible {
 }
 
 .modal-inner {
-  /* bg-white p-6 rounded-lg shadow-lg md:w-[555px] w-[330px] h-[260px] overflow-y-auto flex flex-col gap-4 */
   background-color: white;
   padding: 24px;
-  border-radius: 10px;
-  box-shadow: #afaeae;
-  height: 80px;
-  width: 330px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 350px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .header-modal {
-  /* w-full flex justify-between items-center */
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -220,11 +226,66 @@ button:focus-visible {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 4px;
+  gap: 8px;
   align-items: center;
 }
 
 .modal-text {
-  font-size: large;
+  font-size: 1.1rem;
   color: rgb(255, 0, 0);
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  .col {
+    width: 50px;
+    height: 50px;
+    font-size: 1rem;
+  }
+
+  .board {
+    margin: 4px;
+  }
+
+  .info {
+    gap: 10px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .col {
+    width: 42px;
+    height: 42px;
+    font-size: 0.9rem;
+  }
+
+  button {
+    padding: 0.3rem 0.8rem;
+    height: 32px;
+  }
+
+  .game-container {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .modal-inner {
+    padding: 16px;
+    width: 85%;
+  }
+
+  .board-size {
+    padding: 2px 10px;
+    height: 30px;
+    font-weight: 400px;
+  }
+  .game-container {
+    width: 70vw;
+  }
 }
