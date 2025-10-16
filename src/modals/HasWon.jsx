@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import closeIcon from "../assets/Close.svg";
 
 const HasWon = ({ open, handleClose }) => {
   const onClickClose = () => {
@@ -26,7 +25,7 @@ const HasWon = ({ open, handleClose }) => {
         <div className="header-modal">
           <p className=""></p>
           <img
-            src={closeIcon}
+            src="/assets/Close.svg"
             alt="close-icon"
             className="cursor-pointer"
             onClick={onClickClose}

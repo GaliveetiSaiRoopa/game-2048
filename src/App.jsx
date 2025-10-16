@@ -272,7 +272,7 @@ function App() {
         <div className="game-controls">
           <div className={`undo-wrapper`}>
             <img
-              src="src/assets/undo.svg"
+              src="/assets/undo.svg"
               alt="undo"
               className={`undo-img ${undoBoard.length < 2 ? "disable" : ""} `}
               onClick={handleUndo}
@@ -281,7 +281,7 @@ function App() {
           </div>
           <div className={`undo-wrapper`}>
             <img
-              src="src/assets/redo.svg"
+              src="/assets/redo.svg"
               alt="redo"
               className={`undo-img ${redoBoard.length < 1 ? "disable" : ""}`}
               onClick={handleRedo}
