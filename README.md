@@ -30,7 +30,7 @@ Build for production: npm run build
 -Tiles with the same number (adjacent tiles - in arrow direction) merge into one tile with their sum.
 - After every move new tile with values either 2 or 4 gets added to the board at random empty tile.
 - Game ends when:
-  - You reach score 2048 (win)
+  - You reach 2048 (win) (any tile number)
   - No more moves are possible
  
 ### Score Calculation:
